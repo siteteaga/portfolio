@@ -1,0 +1,49 @@
+/* Styles for the project detail image gallery */
+
+.project-gallery {
+  position: relative;
+}
+
+.project-gallery .thumbs-swiper .swiper-slide-thumb-active img {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
+}
+
+/* Setas de navegação */
+.project-gallery .swiper-button-next,
+.project-gallery .swiper-button-prev {
+  color: var(--color-primary-medium);
+}
+
+.project-gallery .swiper-button-next:hover,
+.project-gallery .swiper-button-prev:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Paginação */
+.project-gallery .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.6);
+  width: 8px;
+  height: 8px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.project-gallery .swiper-pagination-bullet-active {
+  background: var(--color-primary-medium);
+  transform: scale(1.3);
+}
+
+.project-gallery .swiper-slide {
+  overflow: hidden;
+  background-color: var(--color-overlay-light);
+}
+
+/* Fade-in ao carregar */
+.project-gallery .swiper-slide img {
+  animation: imgFadeIn 0.4s ease;
+}
+
+@keyframes imgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

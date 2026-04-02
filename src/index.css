@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+/* Color Variables */
+:root {
+  /* Primary Colors */
+  --color-primary-bg: #F7EDE4;
+  --color-primary-dark: #63320A;
+  --color-primary-medium: #A3612F;
+  --color-primary-light: #63320A;
+
+  /* Accent Colors */
+  --color-accent-dark: #2D4530;
+
+  /* Overlay Colors */
+  --color-overlay-dark: rgba(137, 73, 0, 0.4);
+  --color-overlay-medium: rgba(137, 73, 0, 0.6);
+  --color-overlay-light: rgba(137, 73, 0, 0.1);
+  --color-border-light: rgba(206, 131, 74, 0.3);
+  --color-border-medium: rgba(137, 73, 0, 0.2);
+  --color-border-dark: rgba(137, 73, 0, 0.3);
+
+  /* Background Gradients */
+  --gradient-light: linear-gradient(135deg, #F5E6D3 0%, #E8D5C4 100%);
+  --gradient-light-start: #F5E6D3;
+
+  /* Shadow Colors */
+  --color-shadow-primary: rgba(178, 111, 61, 0.6);
+  --color-shadow-light: rgba(178, 111, 61, 0.4);
+  --color-shadow-blur: rgba(178, 111, 61, 0.05);
+  --color-shadow-blur-dark: rgba(137, 73, 0, 0.05);
+
+}
+
+/*
+  Modern CSS Reset by Andy Bell
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Raleway", "Inter", sans-serif;
+  background-color: var(--color-primary-bg);
+  overflow-x: hidden;
+}
+
+/* Scroll Snap Container */
+.scroll-snap-container {
+  scroll-snap-type: y proximity;
+  scroll-behavior: auto;
+  overflow-y: scroll;
+  height: 100vh;
+}
+
+/* Scroll Snap Sections */
+.scroll-snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  min-height: 100vh;
+}
+
+.project-gallery .thumbs-swiper .swiper-slide {
+  opacity: 0.6;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.project-gallery .thumbs-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.project-gallery .thumbs-swiper .swiper-slide-thumb-active img {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  outline: 2px solid var(--color-primary-medium);
+  outline-offset: 2px;
+  border-radius: 0.75rem;
+}
+
+/* Esconder scrollbar nativa no swiper de thumbs */
+.project-gallery .thumbs-swiper .swiper-wrapper {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.project-gallery .thumbs-swiper .swiper-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+/* Rounded Design Theme */
+button {
+  border-radius: 1rem;
+}
+
+img:not(.rounded-full) {
+  border-radius: 1rem;
+}
+
+.card,
+.testimonial-card,
+.skill-card {
+  border-radius: 1rem;
+}
+
+/* ===== ANIMATIONS ===== */
+
+/* Fade In Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Skeleton Pulse Animation */
+@keyframes skeletonPulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-skeleton-pulse {
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+/* Animation Delays */
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+
+/* Initially hidden for animations */
+.animate-on-load {
+  opacity: 0;
+}
+
+/* Parallax effect */
+.parallax-bg {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* Section spacing */
+.section-spacing {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .section-spacing {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-spacing {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
