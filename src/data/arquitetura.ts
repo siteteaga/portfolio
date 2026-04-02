@@ -6,7 +6,6 @@
 // =============================================================================
 
 import type { ArchitectureCategory } from "./types";
-import { cld } from "../lib/cloudinary";
 
 // Interface simplificada - só o que você precisa preencher
 interface ProjetoArquitetura {
@@ -25,39 +24,39 @@ interface ProjetoArquitetura {
 // CASAS
 // =============================================================================
 
-const casa1 = cld("/images/arquitetura/casas/casa-penha/FOTO268.webp");
-const casa2 = cld("/images/arquitetura/casas/casa-container/FOTO291.webp");
-const casa3 = cld("/images/arquitetura/casas/casa-toni/FOTO313.webp");
-const casa4 = cld("/images/arquitetura/casas/casa-doroti/FOTO326.webp");
-const casa5 = cld("/images/arquitetura/casas/casa-crem/FOTO341.webp");
+const casa1 = "/images/arquitetura/casas/casa-penha/FOTO268.webp";
+const casa2 = "/images/arquitetura/casas/casa-container/FOTO291.webp";
+const casa3 = "/images/arquitetura/casas/casa-toni/FOTO313.webp";
+const casa4 = "/images/arquitetura/casas/casa-doroti/FOTO326.webp";
+const casa5 = "/images/arquitetura/casas/casa-crem/FOTO341.webp";
 
 export const casas: ProjetoArquitetura[] = [
   {
     id: 101,
     image: casa1,
     images: [
-      cld("/images/arquitetura/casas/casa-penha/FOTO265.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO266.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO267.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO268.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO269.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO270.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO271.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO272.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO273.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO274.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO275.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO276.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO277.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO278.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO279.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO280.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO281.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO282.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO283.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO284.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO285.webp"),
-      cld("/images/arquitetura/casas/casa-penha/FOTO286.webp"),
+      "/images/arquitetura/casas/casa-penha/FOTO265.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO266.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO267.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO268.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO269.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO270.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO271.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO272.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO273.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO274.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO275.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO276.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO277.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO278.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO279.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO280.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO281.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO282.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO283.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO284.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO285.webp",
+      "/images/arquitetura/casas/casa-penha/FOTO286.webp",
     ],
     title: "Casa Penha",
     description: "Projeto de arquitetura e interiores para casa.",
@@ -71,30 +70,31 @@ export const casas: ProjetoArquitetura[] = [
     id: 102,
     image: casa2,
     images: [
-      cld("/images/arquitetura/casas/casa-container/FOTO291.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO292.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO293.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO294.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO295.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO296.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO297.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO298.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO299.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO300.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO301.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO302.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO303.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO304.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO305.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO306.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO307.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO308.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO309.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO310.webp"),
-      cld("/images/arquitetura/casas/casa-container/FOTO311.webp"),
+      "/images/arquitetura/casas/casa-container/FOTO291.webp",
+      "/images/arquitetura/casas/casa-container/FOTO292.webp",
+      "/images/arquitetura/casas/casa-container/FOTO293.webp",
+      "/images/arquitetura/casas/casa-container/FOTO294.webp",
+      "/images/arquitetura/casas/casa-container/FOTO295.webp",
+      "/images/arquitetura/casas/casa-container/FOTO296.webp",
+      "/images/arquitetura/casas/casa-container/FOTO297.webp",
+      "/images/arquitetura/casas/casa-container/FOTO298.webp",
+      "/images/arquitetura/casas/casa-container/FOTO299.webp",
+      "/images/arquitetura/casas/casa-container/FOTO300.webp",
+      "/images/arquitetura/casas/casa-container/FOTO301.webp",
+      "/images/arquitetura/casas/casa-container/FOTO302.webp",
+      "/images/arquitetura/casas/casa-container/FOTO303.webp",
+      "/images/arquitetura/casas/casa-container/FOTO304.webp",
+      "/images/arquitetura/casas/casa-container/FOTO305.webp",
+      "/images/arquitetura/casas/casa-container/FOTO306.webp",
+      "/images/arquitetura/casas/casa-container/FOTO307.webp",
+      "/images/arquitetura/casas/casa-container/FOTO308.webp",
+      "/images/arquitetura/casas/casa-container/FOTO309.webp",
+      "/images/arquitetura/casas/casa-container/FOTO310.webp",
+      "/images/arquitetura/casas/casa-container/FOTO311.webp",
     ],
     title: "Casa Container",
-    description: "Projeto de arquitetura com container e interiores de casa de campo.",
+    description:
+      "Projeto de arquitetura com container e interiores de casa de campo.",
     details:
       "A proposta partiu do aproveitamento inteligente da construção existente, aliada a uma ampliação contemporânea por meio do uso de containers. A intervenção respeita a edificação original enquanto introduz novos volumes com linguagem atual e funcional. A integração entre áreas internas e externas amplia a vivência do espaço, trazendo mais luz, fluidez e possibilidades de uso. O contraste entre materiais reforça o caráter inovador da solução, transformando a ampliação em elemento protagonista do projeto. Uma residência que une reaproveitamento, flexibilidade e identidade arquitetônica.",
     area: "520m²",
@@ -105,14 +105,14 @@ export const casas: ProjetoArquitetura[] = [
     id: 103,
     image: casa3,
     images: [
-      cld("/images/arquitetura/casas/casa-toni/FOTO312.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO313.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO314.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO315.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO316.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO317.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO318.webp"),
-      cld("/images/arquitetura/casas/casa-toni/FOTO319.webp"),
+      "/images/arquitetura/casas/casa-toni/FOTO312.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO313.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO314.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO315.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO316.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO317.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO318.webp",
+      "/images/arquitetura/casas/casa-toni/FOTO319.webp",
     ],
     title: "Casa Toni",
     description: "Projeto de arquitetura e interiores para casa no interior.",
@@ -126,15 +126,15 @@ export const casas: ProjetoArquitetura[] = [
     id: 104,
     image: casa4,
     images: [
-      cld("/images/arquitetura/casas/casa-doroti/FOTO326.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO327.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO328.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO329.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO330.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO331.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO332.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO333.webp"),
-      cld("/images/arquitetura/casas/casa-doroti/FOTO334.webp"),
+      "/images/arquitetura/casas/casa-doroti/FOTO326.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO327.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO328.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO329.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO330.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO331.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO332.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO333.webp",
+      "/images/arquitetura/casas/casa-doroti/FOTO334.webp",
     ],
     title: "Casa Doroti",
     description: "Projeto de arquitetura e interiores para casa de campo.",
@@ -148,12 +148,12 @@ export const casas: ProjetoArquitetura[] = [
     id: 105,
     image: casa5,
     images: [
-      cld("/images/arquitetura/casas/casa-crem/FOTO341.webp"),
-      cld("/images/arquitetura/casas/casa-crem/FOTO342.webp"),
-      cld("/images/arquitetura/casas/casa-crem/FOTO343.webp"),
-      cld("/images/arquitetura/casas/casa-crem/FOTO344.webp"),
-      cld("/images/arquitetura/casas/casa-crem/FOTO345.webp"),
-      cld("/images/arquitetura/casas/casa-crem/FOTO346.webp"),
+      "/images/arquitetura/casas/casa-crem/FOTO341.webp",
+      "/images/arquitetura/casas/casa-crem/FOTO342.webp",
+      "/images/arquitetura/casas/casa-crem/FOTO343.webp",
+      "/images/arquitetura/casas/casa-crem/FOTO344.webp",
+      "/images/arquitetura/casas/casa-crem/FOTO345.webp",
+      "/images/arquitetura/casas/casa-crem/FOTO346.webp",
     ],
     title: "Casa Crem",
     description: "Projeto de arquitetura de fachada e área gourmet para casa.",
@@ -169,23 +169,25 @@ export const casas: ProjetoArquitetura[] = [
 // EDIFÍCIOS
 // =============================================================================
 
-const edificio1 = cld("/images/arquitetura/edificios/edificio-lobo/FOTO288.webp");
-const edificio2 = cld("/images/arquitetura/edificios/edificio-blue/FOTO320.webp");
-const edificio3 = cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO336.webp");
-const edificio4 = cld("/images/arquitetura/edificios/edificio-utupanema/FOTO347.webp");
-
+const edificio1 = "/images/arquitetura/edificios/edificio-lobo/FOTO288.webp";
+const edificio2 = "/images/arquitetura/edificios/edificio-blue/FOTO320.webp";
+const edificio3 =
+  "/images/arquitetura/edificios/edificio-jose-maria/FOTO336.webp";
+const edificio4 =
+  "/images/arquitetura/edificios/edificio-utupanema/FOTO347.webp";
 export const edificios: ProjetoArquitetura[] = [
   {
     id: 201,
     image: edificio1,
     images: [
-      cld("/images/arquitetura/edificios/edificio-lobo/FOTO287.webp"),
-      cld("/images/arquitetura/edificios/edificio-lobo/FOTO288.webp"),
-      cld("/images/arquitetura/edificios/edificio-lobo/FOTO289.webp"),
-      cld("/images/arquitetura/edificios/edificio-lobo/FOTO290.webp"),
+      "/images/arquitetura/edificios/edificio-lobo/FOTO287.webp",
+      "/images/arquitetura/edificios/edificio-lobo/FOTO288.webp",
+      "/images/arquitetura/edificios/edificio-lobo/FOTO289.webp",
+      "/images/arquitetura/edificios/edificio-lobo/FOTO290.webp",
     ],
     title: "Edifício Lobo",
-    description: "Projeto de arquitetura para edifício residencial de 9 unidades.",
+    description:
+      "Projeto de arquitetura para edifício residencial de 9 unidades.",
     details:
       "O projeto foi desenvolvido a partir de uma leitura criteriosa do entorno e do potencial construtivo do terreno. A volumetria equilibrada, as aberturas bem posicionadas e a composição das fachadas garantem iluminação, ventilação e conforto aos usuários. A linguagem contemporânea prioriza linhas claras e materiais duráveis, reforçando a integração entre estética e funcionalidade. Cada decisão arquitetônica busca otimizar o uso do espaço, valorizar o empreendimento e criar uma edificação eficiente, coerente com a dinâmica urbana e preparada para o uso a longo prazo.",
     area: "",
@@ -196,15 +198,16 @@ export const edificios: ProjetoArquitetura[] = [
     id: 202,
     image: edificio2,
     images: [
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO320.webp"),
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO321.webp"),
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO322.webp"),
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO323.webp"),
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO324.webp"),
-      cld("/images/arquitetura/edificios/edificio-blue/FOTO325.webp"),
+      "/images/arquitetura/edificios/edificio-blue/FOTO320.webp",
+      "/images/arquitetura/edificios/edificio-blue/FOTO321.webp",
+      "/images/arquitetura/edificios/edificio-blue/FOTO322.webp",
+      "/images/arquitetura/edificios/edificio-blue/FOTO323.webp",
+      "/images/arquitetura/edificios/edificio-blue/FOTO324.webp",
+      "/images/arquitetura/edificios/edificio-blue/FOTO325.webp",
     ],
     title: "Edifício Blue",
-    description: "Projeto de arquitetura para edifício residencial de 28 unidades.",
+    description:
+      "Projeto de arquitetura para edifício residencial de 28 unidades.",
     details:
       "A proposta nasce da leitura do contexto urbano e da busca por uma edificação contemporânea, funcional e eficiente. A composição volumétrica explora cheios e vazios de forma equilibrada, garantindo iluminação, ventilação e identidade arquitetônica. As fachadas recebem tratamento que valoriza a horizontalidade e cria ritmo visual, enquanto os elementos construtivos reforçam a durabilidade e a manutenção simplificada. O resultado é um edifício que dialoga com a cidade, otimiza o uso do terreno e atende às demandas atuais de moradia com clareza e personalidade.",
     area: "",
@@ -215,15 +218,16 @@ export const edificios: ProjetoArquitetura[] = [
     id: 203,
     image: edificio3,
     images: [
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO335.webp"),
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO336.webp"),
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO337.webp"),
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO338.webp"),
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO339.webp"),
-      cld("/images/arquitetura/edificios/edificio-jose-maria/FOTO340.webp"),
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO335.webp",
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO336.webp",
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO337.webp",
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO338.webp",
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO339.webp",
+      "/images/arquitetura/edificios/edificio-jose-maria/FOTO340.webp",
     ],
     title: "Edifício José Maria",
-    description: "Projeto de arquitetura para edifício residencial de 26 unidades.",
+    description:
+      "Projeto de arquitetura para edifício residencial de 26 unidades.",
     details:
       "A edificação foi pensada para dialogar com o entorno de forma equilibrada e contemporânea. A composição volumétrica explora a verticalidade com leveza, enquanto o uso de elementos vazados, vegetação integrada e materiais naturais suaviza a presença urbana. As aberturas garantem iluminação e ventilação adequadas, contribuindo para conforto e eficiência. O projeto busca aliar estética, funcionalidade e durabilidade, resultando em um edifício que valoriza o uso cotidiano e reforça a identidade do espaço na cidade.",
     area: "",
@@ -234,13 +238,14 @@ export const edificios: ProjetoArquitetura[] = [
     id: 204,
     image: edificio4,
     images: [
-      cld("/images/arquitetura/edificios/edificio-utupanema/FOTO347.webp"),
-      cld("/images/arquitetura/edificios/edificio-utupanema/FOTO348.webp"),
-      cld("/images/arquitetura/edificios/edificio-utupanema/FOTO349.webp"),
-      cld("/images/arquitetura/edificios/edificio-utupanema/FOTO350.webp"),
+      "/images/arquitetura/edificios/edificio-utupanema/FOTO347.webp",
+      "/images/arquitetura/edificios/edificio-utupanema/FOTO348.webp",
+      "/images/arquitetura/edificios/edificio-utupanema/FOTO349.webp",
+      "/images/arquitetura/edificios/edificio-utupanema/FOTO350.webp",
     ],
     title: "Edifício Utupanema",
-    description: "Projeto de arquitetura para edifício residencial de 12 unidades.",
+    description:
+      "Projeto de arquitetura para edifício residencial de 12 unidades.",
     details:
       "A proposta valoriza a composição equilibrada entre volumes, materiais e proporções. A alternância entre planos claros e texturas mais marcantes cria ritmo visual e identidade, enquanto os elementos verdes integrados às fachadas suavizam a escala do edifício. As aberturas foram pensadas para garantir conforto ambiental e privacidade, reforçando a funcionalidade dos espaços internos. O conjunto resulta em uma edificação contemporânea, coerente com o contexto urbano e pensada para uma ocupação eficiente e duradoura.",
     area: "",
@@ -253,8 +258,10 @@ export const edificios: ProjetoArquitetura[] = [
 // FUNÇÃO PARA MONTAR PROJETOS COM CATEGORIA
 // =============================================================================
 export function getArquiteturaComCategoria() {
-  const addCategory = (projects: ProjetoArquitetura[], category: ArchitectureCategory) =>
-    projects.map(p => ({ ...p, type: "Arquitetura" as const, category }));
+  const addCategory = (
+    projects: ProjetoArquitetura[],
+    category: ArchitectureCategory,
+  ) => projects.map((p) => ({ ...p, type: "Arquitetura" as const, category }));
 
   return [
     ...addCategory(casas, "Casas"),
