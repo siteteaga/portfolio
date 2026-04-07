@@ -57,7 +57,7 @@ export default function Footer() {
             <SocialIcon href="https://br.pinterest.com/arquitetanath" ariaLabel="Pinterest">
               <PinterestIcon className="text-[var(--color-primary-medium)]" />
             </SocialIcon>
-            <SocialIcon href="https://linkedin.com/in/nath-arquiteta" ariaLabel="LinkedIn">
+            <SocialIcon href="https://www.linkedin.com/in/arquitetanath/" ariaLabel="LinkedIn">
               <LinkedInIcon className="text-[var(--color-primary-medium)]" />
             </SocialIcon>
           </div>
