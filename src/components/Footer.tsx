@@ -25,10 +25,10 @@ export default function Footer() {
             <p className="flex items-center justify-center gap-2 text-sm md:text-base">
               <Mail className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
               <a
-                href="mailto:nath.arquiteta@gmail.com"
+                href="mailto:nathalialeme@teagaarquitetura.com.br"
                 className="hover:text-[var(--color-primary-lightest)] transition-colors break-all"
               >
-                nath.arquiteta@gmail.com
+                nathalialeme@teagaarquitetura.com.br
               </a>
             </p>
             <p className="flex items-center justify-center gap-2 text-sm md:text-base">
