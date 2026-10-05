@@ -9,6 +9,7 @@ import "./project-gallery.css";
 import { MapPin, Maximize2, Tag } from "lucide-react";
 import { BackButton, Skeleton } from "./ui";
 import { getProjectById } from "../data/projects";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -26,6 +27,8 @@ export default function ProjectDetail() {
   }, [projectId]);
 
   const project = getProjectById(Number(projectId));
+
+  usePageTitle(project?.title ?? "Projeto não encontrado");
 
   if (!isVisible) {
     return (

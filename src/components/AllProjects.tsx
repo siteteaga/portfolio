@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BackButton, SectionTitle, Tab, TabGroup } from "./ui";
 import Footer from "./Footer";
+import { usePageTitle } from "../hooks/usePageTitle";
 import {
   getAllProjects,
   INTERIOR_CATEGORIES,
@@ -15,6 +16,8 @@ type MainCategory = "Todos" | ProjectType;
 const ITEMS_PER_PAGE = 6;
 
 function AllProjects() {
+  usePageTitle("Todos os projetos");
+
   const navigate = useNavigate();
   const [activeMainTab, setActiveMainTab] = useState<MainCategory>("Todos");
   const [activeSubTab, setActiveSubTab] = useState<string>("Todos");
