@@ -13,11 +13,14 @@ export default function Tab({
 }: TabProps) {
   return (
     <button
+      type="button"
+      role="tab"
+      aria-selected={isActive}
       onClick={onClick}
-      className={`px-2 md:px-6 py-2 md:py-3 rounded-xl font-medium transition-all duration-300 text-xs md:text-base flex-1 min-w-0 truncate ${
+      className={`-mb-px shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-sm md:text-base font-medium tracking-wide transition-colors duration-200 ${
         isActive
-          ? "bg-[var(--color-primary-medium)] text-white shadow-lg transform scale-105"
-          : "text-[var(--color-primary-medium)] hover:bg-[var(--color-primary-medium)]/10 hover:text-[var(--color-primary-dark)] cursor-pointer"
+          ? "border-primary-dark text-primary-dark"
+          : "border-transparent text-ink-soft hover:text-primary-dark hover:border-line-strong"
       } ${className}`}
     >
       {label}
@@ -27,13 +30,20 @@ export default function Tab({
 
 interface TabGroupProps {
   children: React.ReactNode;
+  /** Descrição do grupo para leitores de tela */
+  label?: string;
   className?: string;
 }
 
-export function TabGroup({ children, className = "" }: TabGroupProps) {
+export function TabGroup({ children, label, className = "" }: TabGroupProps) {
   return (
-    <div className={`flex justify-center pt-8 pb-4 px-4 ${className}`}>
-      <div className="flex bg-white/50 backdrop-blur-sm rounded-2xl shadow-lg gap-2 md:gap-4 p-3 md:p-4 w-full max-w-2xl">
+    <div className={`border-b border-line ${className}`}>
+      {/* Em telas pequenas a faixa rola na horizontal em vez de cortar os nomes */}
+      <div
+        role="tablist"
+        aria-label={label}
+        className="no-scrollbar -mx-5 flex gap-7 overflow-x-auto px-5 sm:mx-0 sm:px-0 md:gap-10"
+      >
         {children}
       </div>
     </div>

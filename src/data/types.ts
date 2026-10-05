@@ -28,6 +28,15 @@ export interface ProjectDetails {
   services?: string[];
 }
 
+// Nome de exibição das categorias (o valor interno não leva acento)
+const CATEGORY_LABELS: Record<string, string> = {
+  Edificios: "Edifícios",
+};
+
+export function getCategoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
+
 // Constantes de categorias
 export const INTERIOR_CATEGORIES: InteriorCategory[] = [
   "Residencial",

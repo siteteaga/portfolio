@@ -21,6 +21,7 @@ export type {
 export {
   INTERIOR_CATEGORIES,
   ARCHITECTURE_CATEGORIES,
+  getCategoryLabel,
 } from "./types";
 
 // Combina todos os projetos

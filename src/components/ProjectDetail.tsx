@@ -1,206 +1,239 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperClass } from "swiper/types";
-import { Navigation, Pagination, Thumbs, FreeMode } from "swiper/modules";
+import { Navigation, Thumbs, FreeMode, Keyboard } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "./project-gallery.css";
-import { MapPin, Maximize2, Tag } from "lucide-react";
-import { BackButton, Skeleton } from "./ui";
-import { getProjectById } from "../data/projects";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLink, BackButton, Skeleton } from "./ui";
+import Footer from "./Footer";
+import NotFound from "./NotFound";
 import { usePageTitle } from "../hooks/usePageTitle";
+import { getAllProjects, getCategoryLabel, type ProjectDetails } from "../data/projects";
+
+// Foto da galeria com placeholder enquanto carrega
+function GalleryImage({ src, alt, eager }: { src: string; alt: string; eager: boolean }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="relative aspect-[16/10] bg-sand">
+      {!isLoaded && <Skeleton className="absolute inset-0 rounded-none" />}
+      <img
+        src={src}
+        alt={alt}
+        ref={(img) => {
+          // Imagens em cache podem já estar prontas antes do onLoad
+          if (img?.complete && img.naturalWidth > 0) setIsLoaded(true);
+        }}
+        onLoad={() => setIsLoaded(true)}
+        className={`h-full w-full object-cover transition-opacity duration-300 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+      />
+    </div>
+  );
+}
+
+function ProjectGallery({ project }: { project: ProjectDetails }) {
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const total = project.images.length;
+
+  return (
+    <div className="project-gallery">
+      {/* Main Swiper */}
+      <div className="relative">
+        <Swiper
+          modules={[Navigation, Thumbs, Keyboard]}
+          thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+          navigation={total > 1}
+          keyboard={{ enabled: true }}
+          loop={total > 1}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+          className="overflow-hidden rounded-sm"
+        >
+          {project.images.map((img, i) => (
+            <SwiperSlide key={i}>
+              <GalleryImage
+                src={img}
+                alt={`${project.title}, foto ${i + 1} de ${total}`}
+                eager={i === 0}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        {/* Contador — substitui a fileira de bolinhas, que não escala para 20+ fotos */}
+        {total > 1 && (
+          <p
+            className="absolute bottom-3 right-3 z-10 rounded-sm bg-primary-dark/85 px-2.5 py-1 text-xs font-medium tabular-nums tracking-wider text-white"
+            aria-live="polite"
+          >
+            {activeIndex + 1} / {total}
+          </p>
+        )}
+      </div>
+
+      {/* Thumbs Swiper */}
+      {total > 1 && (
+        <Swiper
+          onSwiper={setThumbsSwiper}
+          spaceBetween={8}
+          slidesPerView={4}
+          freeMode={true}
+          watchSlidesProgress={true}
+          modules={[FreeMode, Thumbs]}
+          className="thumbs-swiper mt-3"
+          breakpoints={{ 640: { slidesPerView: 6 }, 1024: { slidesPerView: 7 } }}
+        >
+          {project.images.map((img, i) => (
+            <SwiperSlide key={i}>
+              <img
+                src={img}
+                alt=""
+                className="aspect-[3/2] w-full cursor-pointer rounded-sm bg-sand object-cover"
+                loading="lazy"
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
+    </div>
+  );
+}
 
 export default function ProjectDetail() {
   const { projectId } = useParams<{ projectId: string }>();
-  const navigate = useNavigate();
-  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    const t = setTimeout(() => setIsVisible(true), 80);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [projectId]);
-
-  const project = getProjectById(Number(projectId));
+  const projects = getAllProjects();
+  const index = projects.findIndex((p) => p.id === Number(projectId));
+  const project = projects[index];
 
   usePageTitle(project?.title ?? "Projeto não encontrado");
 
-  if (!isVisible) {
-    return (
-      <div className="min-h-screen bg-[var(--color-primary-bg)]">
-        <div className="px-4 md:px-8 lg:px-20 py-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-          <Skeleton className="w-full h-[400px]" />
-          <div className="flex flex-col gap-4">
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-4/5" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (!project) {
     return (
-      <div className="min-h-screen bg-[var(--color-primary-bg)] flex flex-col items-center justify-center gap-6 px-4">
-        <p className="text-6xl font-bold text-[var(--color-primary-medium)] opacity-30">404</p>
-        <h1 className="text-2xl font-semibold text-[var(--color-primary-dark)]">Projeto não encontrado</h1>
-        <p className="text-[var(--color-primary-medium)]">O projeto que você está procurando não existe.</p>
-        <button
-          onClick={() => navigate("/projetos")}
-          className="px-6 py-3 bg-[var(--color-primary-medium)] text-white rounded-2xl font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
-        >
-          Ver todos os projetos
-        </button>
-      </div>
+      <>
+        <NotFound
+          title="Projeto não encontrado"
+          message="O projeto que você está procurando não existe."
+        />
+        <Footer />
+      </>
     );
   }
 
-  const badges = [
-    { label: "Localização", value: project.location, icon: <MapPin size={12} /> },
-    ...(project.area ? [{ label: "Área", value: project.area, icon: <Maximize2 size={12} /> }] : []),
-    { label: "Categoria", value: project.category, icon: <Tag size={12} /> },
+  const previousProject = projects[index - 1];
+  const nextProject = projects[index + 1];
+
+  const metadata = [
+    { label: "Localização", value: project.location },
+    ...(project.area ? [{ label: "Área", value: project.area }] : []),
+    { label: "Tipo", value: project.type },
+    { label: "Categoria", value: getCategoryLabel(project.category) },
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--color-primary-bg)]">
-      {/* HERO */}
-      <div className="relative h-[60vh] min-h-[420px] w-full overflow-hidden">
-        <img
-          src={project.images[0]}
-          alt={project.title}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+    <>
+      <main className="pt-[var(--header-height)]">
+        <div className="container-page py-8 md:py-14">
+          <BackButton label="Voltar aos projetos" fallbackTo="/projetos" />
 
-        {/* Overlay elegante */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/70" />
-
-        {/* Conteúdo */}
-        <div className="relative z-10 h-full px-4 md:px-8 lg:px-20 flex flex-col justify-between py-6">
-          <div className="flex justify-between items-center">
-            <BackButton label="Voltar aos Projetos" />
-            <img
-              src="/images/logo-th.webp"
-              alt="Theaga Arquitetura"
-              className="h-10 md:h-14 object-contain brightness-0 invert"
-            />
-          </div>
-
-          <div className="pb-10">
-            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-wide">
+          {/* Cabeçalho do projeto */}
+          <header className="mt-6 border-b border-line pb-8 md:pb-10">
+            <p className="eyebrow text-ink-soft">
+              {project.type} · {getCategoryLabel(project.category)}
+            </p>
+            <h1 className="mt-4 text-[clamp(2rem,1.3rem+3vw,3.75rem)] font-light uppercase leading-[1.05] tracking-[0.04em] text-primary-dark">
               {project.title}
             </h1>
+          </header>
 
-            <div className="flex gap-3 mt-4">
-              <span className="text-xs font-semibold uppercase tracking-widest bg-white/20 text-white px-3 py-1 rounded-full backdrop-blur-sm">
-                {project.type}
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-widest bg-white/10 text-white/80 px-3 py-1 rounded-full backdrop-blur-sm">
-                {project.category}
-              </span>
+          <div className="mt-8 grid items-start gap-10 md:mt-12 lg:grid-cols-12 lg:gap-16">
+            {/* Galeria — a key reinicia o carrossel ao trocar de projeto */}
+            <div className="min-w-0 lg:sticky lg:top-[calc(var(--header-height)+2rem)] lg:col-span-7">
+              <ProjectGallery key={project.id} project={project} />
+            </div>
+
+            {/* Texto + ficha técnica */}
+            <div className="lg:col-span-5">
+              <p className="text-xl font-light leading-snug text-primary-dark md:text-2xl">
+                {project.description}
+              </p>
+
+              {project.details && (
+                <p className="mt-6 text-base leading-relaxed text-primary-dark">
+                  {project.details}
+                </p>
+              )}
+
+              <dl className="mt-10 border-t border-line">
+                {metadata.map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-baseline justify-between gap-6 border-b border-line py-4"
+                  >
+                    <dt className="eyebrow text-ink-soft">{item.label}</dt>
+                    <dd className="text-right text-base font-medium text-primary-dark">
+                      {item.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              <ArrowLink to="/#contato" className="mt-10">
+                Conversar sobre o meu projeto
+              </ArrowLink>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* C. Grid */}
-      <div className="px-4 md:px-8 lg:px-20 py-10 md:py-16 grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-[auto_1fr] gap-8 lg:gap-x-16 lg:gap-y-8 items-start">
-
-        {/* Título + Descrição — mobile: acima da galeria | desktop: col direita linha 1 */}
-        <div className="order-1 lg:order-2 flex flex-col gap-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-[var(--color-primary-dark)] tracking-wide">
-            {project.title}
-          </h2>
-          <hr className="border-[var(--color-border-medium)]" />
-          <p className="italic text-[var(--color-primary-medium)] text-base md:text-lg leading-relaxed">
-            {project.description}
-          </p>
-        </div>
-
-        {/* Gallery — mobile: meio | desktop: col esquerda span 2 linhas */}
-        <div className="order-2 lg:order-1 lg:row-span-2 sticky top-8 w-full project-gallery">
-          {/* Main Swiper */}
-          <Swiper
-            modules={[Navigation, Pagination, Thumbs]}
-            thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-            navigation={true}
-            pagination={{ clickable: true }}
-            loop={project.images.length > 1}
-            className="rounded-2xl overflow-hidden shadow-xl"
+          {/* Projeto anterior / próximo */}
+          <nav
+            aria-label="Outros projetos"
+            className="mt-16 grid grid-cols-2 gap-6 border-t border-line pt-8 md:mt-24"
           >
-            {project.images.map((img, i) => (
-              <SwiperSlide key={i}>
-                <img
-                  src={img}
-                  alt={`${project.title} ${i + 1}`}
-                  className="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
-                  loading={i === 0 ? "eager" : "lazy"}
-                  fetchPriority={i === 0 ? "high" : "auto"}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
-          {/* Thumbs Swiper */}
-          <div style={{ paddingTop: '1rem' }}>
-            <Swiper
-              onSwiper={setThumbsSwiper}
-              spaceBetween={8}
-              slidesPerView={4}
-              freeMode={true}
-              watchSlidesProgress={true}
-              modules={[FreeMode, Thumbs]}
-              className="thumbs-swiper"
-              breakpoints={{ 640: { slidesPerView: 5 }, 1024: { slidesPerView: 6 } }}
-            >
-              {project.images.map((img, i) => (
-                <SwiperSlide key={i}>
-                  <img
-                    src={img}
-                    alt={`${project.title} ${i + 1}`}
-                    className="w-full h-16 md:h-20 object-cover rounded-xl cursor-pointer"
-                    loading="lazy"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+            <div>
+              {previousProject && (
+                <Link to={`/projeto/${previousProject.id}`} className="group inline-block">
+                  <span className="eyebrow flex items-center gap-2 text-ink-soft">
+                    <ArrowLeft
+                      size={14}
+                      aria-hidden="true"
+                      className="transition-transform duration-200 group-hover:-translate-x-1"
+                    />
+                    Anterior
+                  </span>
+                  <span className="mt-2 block text-base font-medium text-primary-dark md:text-lg">
+                    <span className="link-underline">{previousProject.title}</span>
+                  </span>
+                </Link>
+              )}
+            </div>
+            <div className="text-right">
+              {nextProject && (
+                <Link to={`/projeto/${nextProject.id}`} className="group inline-block">
+                  <span className="eyebrow flex items-center justify-end gap-2 text-ink-soft">
+                    Próximo
+                    <ArrowRight
+                      size={14}
+                      aria-hidden="true"
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  </span>
+                  <span className="mt-2 block text-base font-medium text-primary-dark md:text-lg">
+                    <span className="link-underline">{nextProject.title}</span>
+                  </span>
+                </Link>
+              )}
+            </div>
+          </nav>
         </div>
-
-        {/* Detalhes + Badges — mobile: abaixo da galeria | desktop: col direita linha 2 */}
-        <div className="order-3 lg:order-3 flex flex-col gap-6">
-          {project.details && (
-            <p className="text-[var(--color-primary-dark)]/80 text-sm md:text-base leading-relaxed">
-              {project.details}
-            </p>
-          )}
-
-          {/* Badges de metadados */}
-          <div className="grid grid-cols-2 gap-3">
-            {badges.map((badge, i) => (
-              <div
-                key={badge.label}
-                className={`bg-white/70 backdrop-blur-sm rounded-2xl p-3 md:p-4 border border-[var(--color-primary-medium)]/20 shadow-sm flex flex-col gap-1 ${
-                  badges.length % 2 !== 0 && i === badges.length - 1 ? "col-span-2" : ""
-                }`}
-              >
-                <div className="flex items-center gap-1 text-[var(--color-primary-medium)]">
-                  {badge.icon}
-                  <span className="text-xs font-semibold uppercase tracking-wider">{badge.label}</span>
-                </div>
-                <span className="text-sm font-medium text-[var(--color-primary-dark)]">{badge.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }

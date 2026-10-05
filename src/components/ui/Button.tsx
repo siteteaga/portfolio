@@ -19,19 +19,20 @@ export default function Button({
   type = "button",
   disabled = false,
 }: ButtonProps) {
-  const baseClasses = "font-semibold rounded-lg transition-all duration-300 transform cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
+  const baseClasses =
+    "inline-flex items-center justify-center gap-2 font-semibold tracking-wide rounded-sm transition-colors duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed";
 
   const variantClasses = {
-    primary: "bg-[var(--color-primary-medium)] hover:bg-[var(--color-primary-dark)] text-white hover:scale-105 ",
-    secondary: "bg-white text-[var(--color-primary-medium)] border border-[var(--color-primary-medium)] hover:bg-[var(--color-primary-medium)] hover:text-white",
-    outline: "border border-[var(--color-primary-medium)] text-[var(--color-primary-medium)] hover:bg-[var(--color-primary-medium)] hover:text-white",
-    ghost: "text-[var(--color-primary-medium)] hover:bg-[var(--color-primary-medium)]/10",
+    primary: "bg-primary-dark text-white hover:bg-primary-medium disabled:hover:bg-primary-dark",
+    secondary: "bg-surface text-primary-dark border border-line-strong hover:border-primary-dark",
+    outline: "border border-primary-dark text-primary-dark hover:bg-primary-dark hover:text-white",
+    ghost: "text-primary-dark hover:bg-primary-dark/10",
   };
 
   const sizeClasses = {
     sm: "py-2 px-4 text-sm",
     md: "py-3 px-6 text-base",
-    lg: "py-4 px-8 text-lg",
+    lg: "py-4 px-8 text-base",
   };
 
   return (

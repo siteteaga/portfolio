@@ -1,13 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SectionTitle, Button } from "./ui";
-import {
-  Mail,
-  Phone,
-  User,
-  MessageSquare,
-  Send,
-  CheckCircle,
-} from "lucide-react";
+import { Check, Send } from "lucide-react";
 
 interface FormData {
   name: string;
@@ -22,39 +15,67 @@ interface FormErrors {
   message?: string;
 }
 
+type SubmitStatus = "idle" | "submitting" | "success" | "error";
+
+const EMPTY_FORM: FormData = { name: "", email: "", phone: "", message: "" };
+
+const WHATSAPP_URL = "https://wa.me/5511994696897";
+const CONTACT_EMAIL = "nathalialeme@teagaarquitetura.com.br";
+
+function getFieldError(name: keyof FormErrors, value: string): string | undefined {
+  const trimmed = value.trim();
+
+  if (name === "name" && !trimmed) {
+    return "Nome é obrigatório";
+  }
+
+  if (name === "email") {
+    if (!trimmed) return "Email é obrigatório";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return "Email inválido";
+  }
+
+  if (name === "message") {
+    if (!trimmed) return "Mensagem é obrigatória";
+    if (trimmed.length < 10) return "Mensagem deve ter pelo menos 10 caracteres";
+  }
+
+  return undefined;
+}
+
+const labelClasses = "mb-2 block text-sm font-semibold text-primary-dark";
+
+function inputClasses(hasError: boolean) {
+  return `w-full rounded-sm border bg-surface px-4 py-3 text-base text-primary-dark placeholder:text-ink-soft/60 transition-colors duration-200 focus:outline-none focus:ring-1 disabled:opacity-60 ${
+    hasError
+      ? "border-danger focus:border-danger focus:ring-danger"
+      : "border-line-strong focus:border-primary-dark focus:ring-primary-dark"
+  }`;
+}
+
 function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-
+  const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const successRef = useRef<HTMLDivElement>(null);
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  const isSubmitting = status === "submitting";
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Nome é obrigatório";
+  // Leva o foco para a confirmação, para leitores de tela e teclado
+  useEffect(() => {
+    if (status === "success") {
+      successRef.current?.focus();
     }
+  }, [status]);
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email é obrigatório";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email inválido";
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = "Mensagem é obrigatória";
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Mensagem deve ter pelo menos 10 caracteres";
-    }
+  const validateForm = (): FormErrors => {
+    const newErrors: FormErrors = {
+      name: getFieldError("name", formData.name),
+      email: getFieldError("email", formData.email),
+      message: getFieldError("message", formData.message),
+    };
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
 
   const handleChange = (
@@ -74,14 +95,33 @@ function ContactForm() {
     }
   };
 
+  // Valida ao sair do campo, sem acusar erro em campo que nem foi preenchido
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    if (!value.trim()) return;
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: getFieldError(name as keyof FormErrors, value),
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    const newErrors = validateForm();
+    const firstInvalid = (["name", "email", "message"] as const).find(
+      (field) => newErrors[field]
+    );
+
+    if (firstInvalid) {
+      document.getElementById(firstInvalid)?.focus();
       return;
     }
 
-    setIsSubmitting(true);
+    setStatus("submitting");
 
     try {
       // Preparar dados para Web3Forms
@@ -104,62 +144,86 @@ function ContactForm() {
       const result = await response.json();
 
       if (result.success) {
-        // Marcar como sucesso
-        setSubmitSuccess(true);
-
-        // Limpar o formulário após 3 segundos
-        setTimeout(() => {
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            message: "",
-          });
-          setSubmitSuccess(false);
-        }, 3000);
+        setFormData(EMPTY_FORM);
+        setStatus("success");
       } else {
         throw new Error("Falha ao enviar mensagem");
       }
     } catch (error) {
+      // Mantém o que foi digitado para a pessoa tentar de novo
       console.error("Erro ao enviar formulário:", error);
-      alert(
-        "Erro ao enviar mensagem. Por favor, tente novamente ou entre em contato diretamente."
-      );
-    } finally {
-      setIsSubmitting(false);
+      setStatus("error");
     }
   };
 
   return (
-    <section className="flex flex-col justify-center items-center py-12 md:py-20">
-      <SectionTitle
-        title="ENTRE EM CONTATO"
-        subtitle="Vamos conversar sobre o seu projeto dos sonhos"
-        className="mb-8 md:mb-16"
-        showDivider={false}
-      />
+    <section className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div className="lg:col-span-5">
+        <SectionTitle
+          title="Entre em contato"
+          subtitle="Vamos conversar sobre o seu projeto dos sonhos"
+        />
 
-      <div className="max-w-3xl w-full pt-6 md:pt-10">
-        {submitSuccess ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-            <h3 className="text-2xl font-bold text-[var(--color-primary-medium)] mb-2">
-              Mensagem Enviada com Sucesso!
+        {/* Canais diretos, para quem prefere não usar o formulário */}
+        <dl className="mt-10 border-t border-line">
+          <div className="border-b border-line py-5">
+            <dt className="eyebrow text-ink-soft">WhatsApp</dt>
+            <dd className="mt-2">
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-underline text-lg font-medium text-primary-dark"
+              >
+                (11) 99469-6897
+              </a>
+            </dd>
+          </div>
+          <div className="border-b border-line py-5">
+            <dt className="eyebrow text-ink-soft">Email</dt>
+            <dd className="mt-2">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="link-underline break-all text-lg font-medium text-primary-dark"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div className="lg:col-span-7">
+        {status === "success" ? (
+          <div
+            ref={successRef}
+            tabIndex={-1}
+            role="status"
+            className="border-t-2 border-accent-dark pt-8 focus:outline-none"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-dark text-white">
+              <Check size={22} aria-hidden="true" />
+            </span>
+            <h3 className="mt-6 text-2xl font-medium text-primary-dark">
+              Mensagem enviada
             </h3>
-            <p className="text-[var(--color-primary-medium)] opacity-80">
+            <p className="mt-3 max-w-md text-base leading-relaxed text-ink-soft md:text-lg">
               A Nathalia receberá sua mensagem em breve e entrará em contato.
             </p>
+            <Button
+              variant="outline"
+              className="mt-8"
+              onClick={() => setStatus("idle")}
+            >
+              Enviar outra mensagem
+            </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             {/* Nome */}
-            <div className="pb-4">
-              <label
-                htmlFor="name"
-                className="flex items-center gap-2 text-[var(--color-primary-medium)] font-semibold mb-2"
-              >
-                <User className="w-5 h-5" />
-                Nome *
+            <div>
+              <label htmlFor="name" className={labelClasses}>
+                Nome
               </label>
               <input
                 type="text"
@@ -167,113 +231,134 @@ function ContactForm() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 rounded-lg border bg-white ${
-                  errors.name
-                    ? "border-red-500"
-                    : "border-[var(--color-primary-medium)]/20"
-                } focus:outline-none focus:border-[var(--color-primary-medium)] focus:ring-2 focus:ring-[var(--color-primary-medium)]/20 transition-all`}
+                onBlur={handleBlur}
+                disabled={isSubmitting}
+                autoComplete="name"
+                aria-required="true"
+                aria-invalid={Boolean(errors.name)}
+                aria-describedby={errors.name ? "name-error" : undefined}
+                className={inputClasses(Boolean(errors.name))}
                 placeholder="Seu nome completo"
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                <p id="name-error" className="mt-2 text-sm font-medium text-danger">
+                  {errors.name}
+                </p>
               )}
             </div>
 
-            {/* Email */}
-            <div className="pb-4">
-              <label
-                htmlFor="email"
-                className="flex items-center gap-2 text-[var(--color-primary-medium)] font-semibold mb-2"
-              >
-                <Mail className="w-5 h-5" />
-                Email *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 rounded-lg border bg-white ${
-                  errors.email
-                    ? "border-red-500"
-                    : "border-[var(--color-primary-medium)]/20"
-                } focus:outline-none focus:border-[var(--color-primary-medium)] focus:ring-2 focus:ring-[var(--color-primary-medium)]/20 transition-all`}
-                placeholder="seu@email.com"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className={labelClasses}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isSubmitting}
+                  autoComplete="email"
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  className={inputClasses(Boolean(errors.email))}
+                  placeholder="seu@email.com"
+                />
+                {errors.email && (
+                  <p id="email-error" className="mt-2 text-sm font-medium text-danger">
+                    {errors.email}
+                  </p>
+                )}
+              </div>
 
-            {/* Telefone */}
-            <div className="pb-4">
-              <label
-                htmlFor="phone"
-                className="flex items-center gap-2 text-[var(--color-primary-medium)] font-semibold mb-2"
-              >
-                <Phone className="w-5 h-5" />
-                Telefone (opcional)
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border bg-white border-[var(--color-primary-medium)]/20 focus:outline-none focus:border-[var(--color-primary-medium)] focus:ring-2 focus:ring-[var(--color-primary-medium)]/20 transition-all"
-                placeholder="(11) 99999-9999"
-              />
+              {/* Telefone */}
+              <div>
+                <label htmlFor="phone" className={labelClasses}>
+                  Telefone <span className="font-normal text-ink-soft">(opcional)</span>
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  autoComplete="tel"
+                  className={inputClasses(false)}
+                  placeholder="(11) 99999-9999"
+                />
+              </div>
             </div>
 
             {/* Mensagem */}
-            <div className="pb-4">
-              <label
-                htmlFor="message"
-                className="flex items-center gap-2 text-[var(--color-primary-medium)] font-semibold mb-2"
-              >
-                <MessageSquare className="w-5 h-5" />
-                Mensagem *
+            <div>
+              <label htmlFor="message" className={labelClasses}>
+                Mensagem
               </label>
               <textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={isSubmitting}
                 rows={6}
-                className={`w-full px-4 py-3 rounded-lg border bg-white ${
-                  errors.message
-                    ? "border-red-500"
-                    : "border-[var(--color-primary-medium)]/20"
-                } focus:outline-none focus:border-[var(--color-primary-medium)] focus:ring-2 focus:ring-[var(--color-primary-medium)]/20 transition-all resize-none`}
+                aria-required="true"
+                aria-invalid={Boolean(errors.message)}
+                aria-describedby={errors.message ? "message-error" : undefined}
+                className={`${inputClasses(Boolean(errors.message))} resize-y`}
                 placeholder="Conte-nos sobre o seu projeto..."
               />
               {errors.message && (
-                <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                <p id="message-error" className="mt-2 text-sm font-medium text-danger">
+                  {errors.message}
+                </p>
               )}
             </div>
 
-            {/* Botão de Enviar */}
-            <div className="flex justify-center">
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isSubmitting}
-                className="flex items-center gap-2"
+            {/* Erro de envio — no lugar do alert() */}
+            {status === "error" && (
+              <div
+                role="alert"
+                className="border-l-2 border-danger bg-danger/5 px-4 py-3 text-base text-primary-dark"
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Enviar Mensagem
-                  </>
-                )}
-              </Button>
-            </div>
+                <p className="font-semibold">Não foi possível enviar sua mensagem.</p>
+                <p className="mt-1">
+                  Tente novamente ou fale direto pelo{" "}
+                  <a
+                    href={WHATSAPP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold underline underline-offset-4"
+                  >
+                    WhatsApp
+                  </a>
+                  .
+                </p>
+              </div>
+            )}
+
+            {/* Botão de Enviar */}
+            <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
+              {isSubmitting ? (
+                <>
+                  <span
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                    aria-hidden="true"
+                  />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  Enviar mensagem
+                  <Send size={16} aria-hidden="true" />
+                </>
+              )}
+            </Button>
           </form>
         )}
       </div>

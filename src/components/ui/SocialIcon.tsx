@@ -15,11 +15,13 @@ export default function SocialIcon({
   className = "",
   ariaLabel,
 }: SocialIconProps) {
-  const baseClasses = "transition-all duration-300";
+  const baseClasses = "transition-colors duration-200";
 
   const variantClasses = {
-    footer: "w-9 h-9 md:w-10 md:h-10 bg-white bg-opacity-20 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-opacity-30",
-    button: "w-full max-w-[280px] h-14 md:h-15 bg-[var(--color-primary-medium)] border border-[var(--color-border-light)] flex items-center justify-center shadow-sm hover:shadow-md rounded-xl md:rounded-2xl gap-4 md:gap-8 group hover:scale-105 hover:-translate-y-1 px-4",
+    footer:
+      "w-11 h-11 flex items-center justify-center rounded-sm border border-white/50 text-white hover:bg-white hover:text-primary-medium",
+    button:
+      "group inline-flex items-center gap-3 rounded-sm border border-primary-dark px-5 py-3 text-primary-dark hover:bg-primary-dark hover:text-white",
   };
 
   return (

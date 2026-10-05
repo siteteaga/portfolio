@@ -1,16 +1,22 @@
 interface SectionTitleProps {
   title: string;
+  eyebrow?: string;
   subtitle?: string;
   alignment?: "center" | "left" | "right";
-  showDivider?: boolean;
+  /** Nível do título. Use "h1" apenas uma vez por página. */
+  as?: "h1" | "h2";
+  /** Usar sobre fundo escuro */
+  onDark?: boolean;
   className?: string;
 }
 
 export default function SectionTitle({
   title,
+  eyebrow,
   subtitle,
-  alignment = "center",
-  showDivider = true,
+  alignment = "left",
+  as: Heading = "h2",
+  onDark = false,
   className = "",
 }: SectionTitleProps) {
   const alignmentClasses = {
@@ -20,27 +26,30 @@ export default function SectionTitle({
   };
 
   return (
-    <div
-      className={`flex flex-col gap-4 ${alignmentClasses[alignment]} ${className}`}
-    >
-      {showDivider && alignment === "center" && (
-        <>
-          <div className="w-100 md:w-4xl h-px bg-[var(--color-primary-dark)] opacity-60"></div>
-          <div className="w-50 md:w-2xl h-px bg-[var(--color-primary-dark)] opacity-60"></div>
-        </>
+    <div className={`flex flex-col ${alignmentClasses[alignment]} ${className}`}>
+      {eyebrow && (
+        <p className={`eyebrow mb-4 ${onDark ? "text-white/75" : "text-ink-soft"}`}>
+          {eyebrow}
+        </p>
       )}
 
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-[var(--color-primary-dark)] opacity-60 tracking-wider">
+      <Heading
+        className={`text-[clamp(1.75rem,1.2rem+2.2vw,3rem)] font-light uppercase leading-[1.1] tracking-[0.06em] ${
+          onDark ? "text-white" : "text-primary-dark"
+        }`}
+      >
         {title}
-      </h1>
+      </Heading>
 
       {subtitle && (
-        <span className="text-base md:text-lg text-[var(--color-primary-medium)] opacity-80 font-medium tracking-wide">
+        <p
+          className={`mt-4 max-w-xl text-base md:text-lg leading-relaxed ${
+            onDark ? "text-white/80" : "text-ink-soft"
+          }`}
+        >
           {subtitle}
-        </span>
+        </p>
       )}
-
-      <div className="w-full max-w-120 h-px bg-[var(--color-primary-dark)] opacity-60"></div>
     </div>
   );
 }

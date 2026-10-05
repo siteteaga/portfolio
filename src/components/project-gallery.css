@@ -4,46 +4,66 @@
   position: relative;
 }
 
-.project-gallery .thumbs-swiper .swiper-slide-thumb-active img {
-  outline: 2px solid rgba(255, 255, 255, 0.9);
-  outline-offset: 2px;
+/* Miniaturas */
+.project-gallery .thumbs-swiper .swiper-slide {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
 }
 
-/* Setas de navegação */
+.project-gallery .thumbs-swiper .swiper-slide:hover {
+  opacity: 0.85;
+}
+
+.project-gallery .thumbs-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.project-gallery .thumbs-swiper .swiper-slide-thumb-active img {
+  outline: 2px solid var(--color-primary-dark);
+  outline-offset: -2px;
+}
+
+/* Setas de navegação — quadradas, discretas, legíveis sobre qualquer foto */
 .project-gallery .swiper-button-next,
 .project-gallery .swiper-button-prev {
-  color: var(--color-primary-medium);
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-top: -1.375rem;
+  border-radius: 0.25rem;
+  color: #fff;
+  background-color: rgba(99, 50, 10, 0.75);
+  transition: background-color 0.2s ease;
 }
 
 .project-gallery .swiper-button-next:hover,
 .project-gallery .swiper-button-prev:hover {
-  color: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
 }
 
-/* Paginação */
-.project-gallery .swiper-pagination-bullet {
-  background: rgba(255, 255, 255, 0.6);
-  width: 8px;
-  height: 8px;
-  transition: background 0.3s ease, transform 0.3s ease;
+.project-gallery .swiper-button-next::after,
+.project-gallery .swiper-button-prev::after {
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
-.project-gallery .swiper-pagination-bullet-active {
-  background: var(--color-primary-medium);
-  transform: scale(1.3);
+.project-gallery .swiper-button-next svg,
+.project-gallery .swiper-button-prev svg {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
-.project-gallery .swiper-slide {
-  overflow: hidden;
-  background-color: var(--color-overlay-light);
+/* No celular a troca é por gesto; as setas só cobririam a foto */
+@media (max-width: 639px) {
+  .project-gallery .swiper-button-next,
+  .project-gallery .swiper-button-prev {
+    display: none;
+  }
 }
 
-/* Fade-in ao carregar */
-.project-gallery .swiper-slide img {
-  animation: imgFadeIn 0.4s ease;
+.project-gallery .swiper-button-prev {
+  left: 0.75rem;
 }
 
-@keyframes imgFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.project-gallery .swiper-button-next {
+  right: 0.75rem;
 }

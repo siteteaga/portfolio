@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { BackButton, SectionTitle, Tab, TabGroup } from "./ui";
+import { useRef } from "react";
+import { useSearchParams } from "react-router-dom";
+import { BackButton, Button, PortfolioCard, SectionTitle, Tab, TabGroup } from "./ui";
 import Footer from "./Footer";
 import { usePageTitle } from "../hooks/usePageTitle";
 import {
   getAllProjects,
+  getCategoryLabel,
   INTERIOR_CATEGORIES,
   ARCHITECTURE_CATEGORIES,
   type ProjectType,
@@ -13,24 +14,27 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type MainCategory = "Todos" | ProjectType;
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
+
+// Categorias principais
+const mainCategories: MainCategory[] = ["Todos", "Interiores", "Arquitetura"];
+
+const pageButtonClasses =
+  "flex h-11 min-w-11 items-center justify-center rounded-sm border px-2 text-sm font-medium transition-colors duration-200";
 
 function AllProjects() {
   usePageTitle("Todos os projetos");
 
-  const navigate = useNavigate();
-  const [activeMainTab, setActiveMainTab] = useState<MainCategory>("Todos");
-  const [activeSubTab, setActiveSubTab] = useState<string>("Todos");
-  const [currentPage, setCurrentPage] = useState(1);
+  // Os filtros vivem na URL: voltar de um projeto mantém aba, categoria e página
+  const [searchParams, setSearchParams] = useSearchParams();
+  const listRef = useRef<HTMLDivElement>(null);
 
-  // Busca todos os projetos do arquivo centralizado
-  const allProjects = getAllProjects();
-
-  // Categorias principais
-  const mainCategories: MainCategory[] = ["Todos", "Interiores", "Arquitetura"];
+  const typeParam = searchParams.get("tipo");
+  const activeMainTab: MainCategory =
+    mainCategories.find((category) => category === typeParam) ?? "Todos";
 
   // Subcategorias baseadas na categoria principal selecionada
-  const getSubCategories = () => {
+  const getSubCategories = (): string[] => {
     if (activeMainTab === "Interiores") {
       return ["Todos", ...INTERIOR_CATEGORIES];
     } else if (activeMainTab === "Arquitetura") {
@@ -40,6 +44,13 @@ function AllProjects() {
   };
 
   const subCategories = getSubCategories();
+
+  const categoryParam = searchParams.get("categoria");
+  const activeSubTab =
+    subCategories.find((category) => category === categoryParam) ?? "Todos";
+
+  // Busca todos os projetos do arquivo centralizado
+  const allProjects = getAllProjects();
 
   // Filtrar projetos
   const filteredProjects = allProjects.filter((project) => {
@@ -58,34 +69,25 @@ function AllProjects() {
 
   // Paginação
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
+  const pageParam = Number(searchParams.get("pagina"));
+  const currentPage =
+    Number.isInteger(pageParam) && pageParam >= 1 && pageParam <= totalPages
+      ? pageParam
+      : 1;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const displayedProjects = filteredProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Resetar para página 1 quando mudar filtros
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeMainTab, activeSubTab]);
-
-  // Resetar subcategoria quando mudar a categoria principal
-  useEffect(() => {
-    setActiveSubTab("Todos");
-  }, [activeMainTab]);
+  const updateFilters = (main: MainCategory, sub: string, page: number) => {
+    const params: Record<string, string> = {};
+    if (main !== "Todos") params.tipo = main;
+    if (sub !== "Todos") params.categoria = sub;
+    if (page > 1) params.pagina = String(page);
+    setSearchParams(params, { replace: true });
+  };
 
   const goToPage = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      goToPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      goToPage(currentPage + 1);
-    }
+    updateFilters(activeMainTab, activeSubTab, page);
+    listRef.current?.scrollIntoView();
   };
 
   // Gerar números das páginas a exibir
@@ -109,148 +111,166 @@ function AllProjects() {
     return pages;
   };
 
-  const handleProjectClick = (projectId: number) => {
-    navigate(`/projeto/${projectId}`);
-  };
+  const total = filteredProjects.length;
 
   return (
-    <div>
-      <section className="min-h-screen pt-8 md:pt-24 px-4 md:px-8 lg:px-20">
-        {/* Header: Botão voltar + Título */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 md:pb-8">
-          <BackButton label="Voltar para home" />
-          <div className="flex-1 flex justify-center">
-            <SectionTitle
-              title="TODOS OS PROJETOS"
-              subtitle="Explore nossa coleção completa de projetos"
-              showDivider={false}
-            />
-          </div>
-          {/* Espaço vazio para balancear o layout - hidden em mobile */}
-          <div className="hidden md:block w-[180px]"></div>
-        </div>
+    <>
+      <main className="pt-[var(--header-height)]">
+        <div className="container-page min-h-[80svh] py-8 md:py-14">
+          {/* Header: Botão voltar + Título */}
+          <BackButton label="Voltar para o início" fallbackTo="/" />
 
-        {/* Tabs principais */}
-        <TabGroup>
-          {mainCategories.map((category) => (
-            <Tab
-              key={category}
-              label={category}
-              isActive={activeMainTab === category}
-              onClick={() => setActiveMainTab(category)}
-            />
-          ))}
-        </TabGroup>
+          <SectionTitle
+            as="h1"
+            title="Todos os projetos"
+            subtitle="Explore nossa coleção completa de projetos"
+            className="mt-6"
+          />
 
-        {/* Tabs de subcategorias */}
-        {subCategories.length > 1 && (
-          <TabGroup className="pt-2">
-            {subCategories.map((category) => (
-              <Tab
-                key={category}
-                label={category}
-                isActive={activeSubTab === category}
-                onClick={() => setActiveSubTab(category)}
-              />
-            ))}
-          </TabGroup>
-        )}
-
-        {/* Grid de projetos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pt-6 md:pt-8 pb-6 md:pb-8 gap-3 md:gap-4">
-          {displayedProjects.map((project) => (
-            <div
-              key={project.id}
-              className="group cursor-pointer transform transition-all duration-300 relative"
-              onClick={() => handleProjectClick(project.id)}
-            >
-              <div className="aspect-[4/3] md:aspect-[6/3] overflow-hidden shadow-2xl relative rounded-2xl bg-white">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover filter transition-all duration-300 rounded-2xl group-hover:scale-110"
-                  loading="lazy"
+          <div ref={listRef}>
+            {/* Tabs principais */}
+            <TabGroup label="Tipo de projeto" className="mt-10">
+              {mainCategories.map((category) => (
+                <Tab
+                  key={category}
+                  label={category}
+                  isActive={activeMainTab === category}
+                  onClick={() => updateFilters(category, "Todos", 1)}
                 />
-                {/* Overlay com gradiente */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-overlay-medium)] via-transparent to-transparent opacity-0 group-hover:opacity-100 flex items-end justify-center transition-all duration-300 rounded-2xl">
-                  <div className="text-center p-4 md:p-6">
-                    <span className="text-white text-lg md:text-xl font-bold text-center drop-shadow-lg block mb-2 md:mb-4">
-                      {project.title}
-                    </span>
-                    <span className="text-white text-xs md:text-sm opacity-90 font-medium">
-                      Ver projeto completo
-                    </span>
-                  </div>
-                </div>
+              ))}
+            </TabGroup>
 
-                {/* Badge de categoria */}
-                <div className="absolute top-2 md:top-4 left-2 md:left-4 bg-[var(--color-primary-medium)] text-white px-2 md:px-3 py-1 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {project.category.toUpperCase()}
-                </div>
+            {/* Subcategorias — filtros menores, para não competir com as abas principais */}
+            {subCategories.length > 1 && (
+              <div
+                role="group"
+                aria-label={`Categorias de ${activeMainTab.toLowerCase()}`}
+                className="animate-fade-in mt-5 flex flex-wrap gap-2"
+              >
+                {subCategories.map((category) => {
+                  const isActive = activeSubTab === category;
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => updateFilters(activeMainTab, category, 1)}
+                      className={`cursor-pointer rounded-sm border px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
+                        isActive
+                          ? "border-primary-dark bg-primary-dark text-white"
+                          : "border-line-strong text-primary-dark hover:border-primary-dark"
+                      }`}
+                    >
+                      {getCategoryLabel(category)}
+                    </button>
+                  );
+                })}
               </div>
+            )}
+
+            <p className="mt-6 text-sm text-ink-soft" aria-live="polite">
+              {total} {total === 1 ? "projeto" : "projetos"}
+              {totalPages > 1 && ` · página ${currentPage} de ${totalPages}`}
+            </p>
+          </div>
+
+          {total === 0 ? (
+            /* Estado vazio */
+            <div className="mt-8 border-t border-line py-16">
+              <h2 className="text-xl font-medium text-primary-dark">
+                Nenhum projeto nesta categoria por enquanto
+              </h2>
+              <p className="mt-2 text-base text-ink-soft">
+                Veja os projetos das outras categorias.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-6"
+                onClick={() => updateFilters("Todos", "Todos", 1)}
+              >
+                Ver todos os projetos
+              </Button>
             </div>
-          ))}
-        </div>
-
-        {/* Paginação */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 pb-8">
-            {/* Botão anterior */}
-            <button
-              onClick={goToPrevPage}
-              disabled={currentPage === 1}
-              className={`p-2 md:p-3 rounded-xl transition-all duration-300 ${
-                currentPage === 1
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-white shadow-md hover:bg-[var(--color-primary-medium)] hover:text-white text-[var(--color-primary-dark)]"
-              }`}
+          ) : (
+            /* Grid de projetos */
+            <div
+              key={`${activeMainTab}-${activeSubTab}-${currentPage}`}
+              className="animate-fade-in mt-6 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
             >
-              <ChevronLeft size={20} />
-            </button>
+              {displayedProjects.map((project) => (
+                <PortfolioCard
+                  key={project.id}
+                  id={project.id}
+                  image={project.image}
+                  title={project.title}
+                  category={project.category}
+                  location={project.location}
+                />
+              ))}
+            </div>
+          )}
 
-            {/* Números das páginas */}
-            <div className="flex gap-1 md:gap-2">
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <nav
+              aria-label="Paginação"
+              className="mt-12 flex items-center justify-center gap-2 md:mt-16"
+            >
+              {/* Botão anterior */}
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                aria-label="Página anterior"
+                className={`${pageButtonClasses} border-line-strong text-primary-dark enabled:cursor-pointer enabled:hover:border-primary-dark disabled:opacity-35`}
+              >
+                <ChevronLeft size={18} aria-hidden="true" />
+              </button>
+
+              {/* Números das páginas */}
               {getPageNumbers().map((page, index) =>
                 page === "..." ? (
                   <span
                     key={`ellipsis-${index}`}
-                    className="px-2 md:px-3 py-2 text-[var(--color-primary-dark)]/50"
+                    className="px-1 text-ink-soft"
+                    aria-hidden="true"
                   >
-                    ...
+                    …
                   </span>
                 ) : (
                   <button
                     key={page}
+                    type="button"
                     onClick={() => goToPage(page as number)}
-                    className={`min-w-[40px] md:min-w-[44px] py-2 md:py-3 rounded-xl font-semibold transition-all duration-300 ${
+                    aria-label={`Página ${page}`}
+                    aria-current={currentPage === page ? "page" : undefined}
+                    className={`${pageButtonClasses} cursor-pointer ${
                       currentPage === page
-                        ? "bg-[var(--color-primary-medium)] text-white shadow-lg"
-                        : "bg-white shadow-md hover:bg-[var(--color-primary-light)] text-[var(--color-primary-dark)]"
+                        ? "border-primary-dark bg-primary-dark text-white"
+                        : "border-line-strong text-primary-dark hover:border-primary-dark"
                     }`}
                   >
                     {page}
                   </button>
                 )
               )}
-            </div>
 
-            {/* Botão próximo */}
-            <button
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-              className={`p-2 md:p-3 rounded-xl transition-all duration-300 ${
-                currentPage === totalPages
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-white shadow-md hover:bg-[var(--color-primary-medium)] hover:text-white text-[var(--color-primary-dark)]"
-              }`}
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
-      </section>
+              {/* Botão próximo */}
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                aria-label="Próxima página"
+                className={`${pageButtonClasses} border-line-strong text-primary-dark enabled:cursor-pointer enabled:hover:border-primary-dark disabled:opacity-35`}
+              >
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </nav>
+          )}
+        </div>
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }
 

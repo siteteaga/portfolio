@@ -1,4 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
+import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import AboutTeaga from "./components/AboutTeaga";
@@ -11,63 +19,93 @@ import ContactForm from "./components/ContactForm";
 import ProjectDetail from "./components/ProjectDetail";
 import WhatsAppButton from "./components/WhatsAppButton";
 import AllProjects from "./components/AllProjects";
+import NotFound from "./components/NotFound";
 
 function HomePage() {
   return (
-    <div>
-      {/* Hero Section */}
-      <div>
+    <>
+      <main>
+        {/* Hero Section */}
         <Hero />
-      </div>
 
-      <div className="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32">
-        {/* Portfolio Section */}
-        <div className="section-spacing">
-          <InteriorDesignPortfolio />
+        <div className="container-page">
+          {/* Portfolio Section */}
+          <div id="interiores" className="section-spacing">
+            <InteriorDesignPortfolio />
+          </div>
+
+          {/* Architectural Portfolio Section */}
+          <div id="arquitetura" className="section-spacing">
+            <ArchitecturePortfolio />
+          </div>
+
+          <div id="escritorio" className="section-spacing">
+            <AboutTeaga />
+          </div>
         </div>
 
-        {/* Architectural Portfolio Section */}
-        <div className="section-spacing">
-          <ArchitecturePortfolio />
+        {/* Client Journey - Full width */}
+        <div id="jornada">
+          <ClientJourney />
         </div>
 
-        <div className="section-spacing">
-          <AboutTeaga />
+        <div className="container-page">
+          <div id="arquiteta" className="section-spacing">
+            <Personal />
+          </div>
         </div>
-      </div>
 
-      {/* Client Journey - Full width */}
-      <ClientJourney />
-
-      <div className="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32">
-        <div className="section-spacing">
-          <Personal />
+        {/* Testimonials - Full width */}
+        <div id="depoimentos">
+          <Testimonials />
         </div>
-      </div>
 
-      {/* Testimonials - Full width */}
-      <Testimonials />
-
-      <div className="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32">
-        {/* Contact Form Section */}
-        <div className="section-spacing">
-          <ContactForm />
+        <div className="container-page">
+          {/* Contact Form Section */}
+          <div id="contato" className="section-spacing">
+            <ContactForm />
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* Footer - no snap */}
       <Footer />
-    </div>
+    </>
   );
+}
+
+// Controla a rolagem nas trocas de rota: âncoras (#contato) e topo da página
+function ScrollManager() {
+  const location = useLocation();
+  const navigationType = useNavigationType();
+
+  useEffect(() => {
+    if (location.hash) {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target) {
+        target.scrollIntoView();
+        return;
+      }
+    }
+
+    // Ao voltar/avançar, o navegador restaura a posição anterior
+    if (navigationType !== "POP") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [location.pathname, location.hash, location.key, navigationType]);
+
+  return null;
 }
 
 function App() {
   return (
     <Router>
+      <ScrollManager />
+      <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/projetos" element={<AllProjects />} />
         <Route path="/projeto/:projectId" element={<ProjectDetail />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <WhatsAppButton />
     </Router>

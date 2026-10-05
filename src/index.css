@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Color Variables */
-:root {
+/* Design tokens — geram utilitários (text-primary-dark, bg-surface, border-line...) */
+@theme {
   /* Primary Colors */
   --color-primary-bg: #F7EDE4;
   --color-primary-dark: #63320A;
@@ -11,6 +11,25 @@
   /* Accent Colors */
   --color-accent-dark: #2D4530;
 
+  /* Texto secundário (contraste AA sobre o fundo creme) */
+  --color-ink-soft: #7A4A22;
+
+  /* Superfícies */
+  --color-surface: #FCF7F2;
+  --color-sand: #EBDCCD;
+
+  /* Fios e bordas */
+  --color-line: rgba(99, 50, 10, 0.18);
+  --color-line-strong: rgba(99, 50, 10, 0.4);
+
+  /* Feedback */
+  --color-danger: #A32A1B;
+
+  --font-sans: "Raleway", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Color Variables */
+:root {
   /* Overlay Colors */
   --color-overlay-dark: rgba(137, 73, 0, 0.4);
   --color-overlay-medium: rgba(137, 73, 0, 0.6);
@@ -19,145 +38,186 @@
   --color-border-medium: rgba(137, 73, 0, 0.2);
   --color-border-dark: rgba(137, 73, 0, 0.3);
 
-  /* Background Gradients */
-  --gradient-light: linear-gradient(135deg, #F5E6D3 0%, #E8D5C4 100%);
-  --gradient-light-start: #F5E6D3;
-
-  /* Shadow Colors */
-  --color-shadow-primary: rgba(178, 111, 61, 0.6);
-  --color-shadow-light: rgba(178, 111, 61, 0.4);
-  --color-shadow-blur: rgba(178, 111, 61, 0.05);
-  --color-shadow-blur-dark: rgba(137, 73, 0, 0.05);
-
+  /* Altura do cabeçalho fixo */
+  --header-height: 4rem;
 }
 
-/*
-  Modern CSS Reset by Andy Bell
-*/
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@media (min-width: 768px) {
+  :root {
+    --header-height: 4.75rem;
+  }
 }
 
-* {
-  margin: 0;
+/* Em @layer para que os utilitários do Tailwind (mt-*, hidden...) tenham prioridade */
+@layer base {
+  /*
+    Modern CSS Reset by Andy Bell
+  */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + 1.5rem);
+    overflow-x: hidden;
+  }
+
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "lnum" 1;
+    color: var(--color-primary-dark);
+    background-color: var(--color-primary-bg);
+    overflow-x: hidden;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  #root,
+  #__next {
+    isolation: isolate;
+  }
+
+  ::selection {
+    background-color: var(--color-primary-medium);
+    color: #fff;
+  }
+
+  /* Foco visível apenas para navegação por teclado */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-dark);
+    outline-offset: 3px;
+  }
+
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: #fff;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
+@layer components {
+  /* ===== LAYOUT ===== */
 
-body {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  font-family: "Raleway", "Inter", sans-serif;
-  background-color: var(--color-primary-bg);
-  overflow-x: hidden;
-}
+  .container-page {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
 
-/* Scroll Snap Container */
-.scroll-snap-container {
-  scroll-snap-type: y proximity;
-  scroll-behavior: auto;
-  overflow-y: scroll;
-  height: 100vh;
-}
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
 
-/* Scroll Snap Sections */
-.scroll-snap-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
-  min-height: 100vh;
-}
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 3rem;
+    }
+  }
 
-.project-gallery .thumbs-swiper .swiper-slide {
-  opacity: 0.6;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
+  /* Section spacing */
+  .section-spacing {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
 
-.project-gallery .thumbs-swiper .swiper-slide-thumb-active {
-  opacity: 1;
-  transform: scale(1.05);
-}
+  @media (min-width: 768px) {
+    .section-spacing {
+      padding-top: 4.5rem;
+      padding-bottom: 4.5rem;
+    }
+  }
 
-.project-gallery .thumbs-swiper .swiper-slide-thumb-active img {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  outline: 2px solid var(--color-primary-medium);
-  outline-offset: 2px;
-  border-radius: 0.75rem;
-}
+  @media (min-width: 1024px) {
+    .section-spacing {
+      padding-top: 5.5rem;
+      padding-bottom: 5.5rem;
+    }
+  }
 
-/* Esconder scrollbar nativa no swiper de thumbs */
-.project-gallery .thumbs-swiper .swiper-wrapper {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+  /* ===== TIPOGRAFIA ===== */
 
-.project-gallery .thumbs-swiper .swiper-wrapper::-webkit-scrollbar {
-  display: none;
-}
+  /* Rótulo pequeno em caixa alta, como na assinatura da marca */
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
 
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
+  /* Link com sublinhado que cresce no hover */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 0.3s ease;
+  }
 
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
+  .link-underline:hover,
+  .link-underline:focus-visible,
+  .group:hover .link-underline,
+  .group:focus-visible .link-underline {
+    background-size: 100% 1px;
+  }
 
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
-}
+  /* Esconde a barra de rolagem em faixas roláveis (abas, carrossel) */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-#root,
-#__next {
-  isolation: isolate;
-}
-
-/* Rounded Design Theme */
-button {
-  border-radius: 1rem;
-}
-
-img:not(.rounded-full) {
-  border-radius: 1rem;
-}
-
-.card,
-.testimonial-card,
-.skill-card {
-  border-radius: 1rem;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* ===== ANIMATIONS ===== */
-
-/* Fade In Animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes fadeIn {
   from {
@@ -168,78 +228,40 @@ img:not(.rounded-full) {
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 /* Skeleton Pulse Animation */
 @keyframes skeletonPulse {
-  0% {
-    background-position: 200% 0;
-  }
+  0%,
   100% {
-    background-position: -200% 0;
+    opacity: 1;
   }
-}
-
-/* Animation Classes */
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  50% {
+    opacity: 0.55;
+  }
 }
 
 .animate-fade-in {
-  animation: fadeIn 1s ease-out forwards;
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.8s ease-out forwards;
+  animation: fadeIn 0.35s ease-out both;
 }
 
 .animate-skeleton-pulse {
-  animation: skeletonPulse 1.5s ease-in-out infinite;
-}
-
-/* Animation Delays */
-.animation-delay-100 { animation-delay: 0.1s; }
-.animation-delay-200 { animation-delay: 0.2s; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-400 { animation-delay: 0.4s; }
-.animation-delay-500 { animation-delay: 0.5s; }
-
-/* Initially hidden for animations */
-.animate-on-load {
-  opacity: 0;
+  animation: skeletonPulse 1.6s ease-in-out infinite;
 }
 
 /* Parallax effect */
 .parallax-bg {
   will-change: transform;
-  transition: transform 0.1s linear;
 }
 
-/* Section spacing */
-.section-spacing {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
-@media (min-width: 768px) {
-  .section-spacing {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-}
 
-@media (min-width: 1024px) {
-  .section-spacing {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

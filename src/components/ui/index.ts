@@ -1,6 +1,8 @@
+export { default as ArrowLink } from "./ArrowLink";
 export { default as BackButton } from "./BackButton";
 export { default as Button } from "./Button";
 export { default as Card } from "./Card";
+export { default as Logo } from "./Logo";
 export { PortfolioCard } from "./PortfolioCard";
 export { default as SectionTitle } from "./SectionTitle";
 export { Skeleton, ImageSkeleton, CardSkeleton } from "./Skeleton";

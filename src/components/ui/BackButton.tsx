@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 interface BackButtonProps {
   label?: string;
   showLabel?: boolean;
+  /** Destino usado quando não há página anterior no histórico (acesso direto pelo link) */
+  fallbackTo?: string;
   onClick?: () => void;
   className?: string;
 }
@@ -11,6 +13,7 @@ interface BackButtonProps {
 export default function BackButton({
   label = "Voltar ao Portfolio",
   showLabel = true,
+  fallbackTo = "/",
   onClick,
   className = "",
 }: BackButtonProps) {
@@ -19,18 +22,26 @@ export default function BackButton({
   const handleClick = () => {
     if (onClick) {
       onClick();
-    } else {
+    } else if (window.history.state?.idx > 0) {
       navigate(-1);
+    } else {
+      navigate(fallbackTo);
     }
   };
 
   return (
     <button
+      type="button"
       onClick={handleClick}
-      className={`inline-flex items-center gap-2 md:gap-4 lg:gap-6 px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-6 text-[var(--color-primary-dark)] hover:text-[var(--color-primary-medium)] transition-all duration-300 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 cursor-pointer ${className}`}
+      aria-label={showLabel ? undefined : label}
+      className={`group inline-flex cursor-pointer items-center gap-2 py-2 text-sm font-medium text-ink-soft transition-colors duration-200 hover:text-primary-dark ${className}`}
     >
-      <ArrowLeft size={18} className="md:w-5 md:h-5" />
-      {showLabel && <span className="hidden sm:inline font-medium text-sm md:text-base">{label}</span>}
+      <ArrowLeft
+        size={16}
+        aria-hidden="true"
+        className="transition-transform duration-200 group-hover:-translate-x-1"
+      />
+      {showLabel && <span>{label}</span>}
     </button>
   );
 }

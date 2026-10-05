@@ -1,22 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { ArrowDown } from "lucide-react";
 
 const bgHero = "/images/hero/FOTO001.webp";
 
 export default function Hero() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
 
   // Parallax effect - manipula DOM diretamente para evitar re-renders
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let ticking = false;
 
     const updateParallax = () => {
       if (bgRef.current && heroRef.current) {
         const rect = heroRef.current.getBoundingClientRect();
         if (rect.bottom > 0) {
-          const scrollY = window.scrollY * 0.4;
-          bgRef.current.style.transform = `translate3d(0, ${scrollY}px, 0) scale(1.1)`;
+          const scrollY = window.scrollY * 0.25;
+          bgRef.current.style.transform = `translate3d(0, ${scrollY}px, 0) scale(1.08)`;
         }
       }
       ticking = false;
@@ -33,75 +35,44 @@ export default function Hero() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Trigger animations on mount
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat flex flex-col overflow-hidden"
+      className="on-dark relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-primary-dark"
     >
       {/* Background with Parallax */}
       <div
         ref={bgRef}
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
+        className="parallax-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${bgHero})`,
-          transform: "translate3d(0, 0, 0) scale(1.1)",
-          willChange: "transform",
+          transform: "translate3d(0, 0, 0) scale(1.08)",
         }}
       />
 
-      {/* Filtro sobre o background */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{ backgroundColor: "var(--color-overlay-dark)" }}
-      />
+      {/* Escurece a base da foto para o texto ter contraste, sem tingir a imagem inteira */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#2a1504]/85 via-[#2a1504]/30 to-[#2a1504]/40" />
 
-      {/* Logo no canto superior direito */}
-      <div
-        className={`absolute top-2 right-2 md:top-4 md:right-20 z-10 transition-all duration-700 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-          }`}
-      >
-        <img
-          src="/images/logo-th.webp"
-          alt="Teaga Arquitetura"
-          className="h-20 md:h-24 lg:h-50 w-auto rounded-xl"
-        />
-      </div>
-
-      {/* Conteudo centralizado */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 md:px-8 text-center text-white">
-        <h1
-          className={`text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-wider mb-4 md:mb-6 transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          style={{ transitionDelay: "200ms" }}
-        >
-          PROJETOS COM EMOÇÕES
+      {/* Conteúdo alinhado à base, na mesma margem do restante da página */}
+      <div className="container-page animate-fade-in relative z-10 pb-12 pt-[calc(var(--header-height)+3rem)] text-white md:pb-20">
+        <h1 className="max-w-[14ch] text-[clamp(2.5rem,1.2rem+6vw,6rem)] font-light uppercase leading-[1] tracking-[0.04em]">
+          Projetos com emoções
         </h1>
-        <p
-          className={`text-lg md:text-xl lg:text-2xl max-w-4xl leading-relaxed font-light mb-12 transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          style={{ transitionDelay: "400ms" }}
-        >
-          Com base na Psicoarquitetura
-        </p>
 
+        <div className="mt-8 flex flex-col gap-6 border-t border-white/40 pt-6 sm:flex-row sm:items-center sm:justify-between md:mt-10">
+          <p className="text-lg font-normal md:text-xl">Com base na Psicoarquitetura</p>
 
-      </div>
-
-      {/* Scroll indicator */}
-      <div
-        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"
-          }`}
-        style={{ transitionDelay: "800ms" }}
-      >
-        <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center p-2">
-          <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+          <a
+            href="#interiores"
+            className="group inline-flex items-center gap-3 self-start text-sm font-semibold uppercase tracking-[0.14em] sm:self-auto"
+          >
+            <span className="link-underline pb-1">Ver projetos</span>
+            <ArrowDown
+              size={16}
+              aria-hidden="true"
+              className="transition-transform duration-200 group-hover:translate-y-1"
+            />
+          </a>
         </div>
       </div>
     </section>

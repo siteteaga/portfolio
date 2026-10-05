@@ -48,7 +48,7 @@ export default function Skills() {
           title="HABILIDADES"
           subtitle="Experiência em desenvolver projetos criativos e funcionais, unindo estética e praticidade. Especialização em planejamento de espaços, escolha de materiais, harmonização de cores e iluminação."
           className="mb-12 md:mb-24 max-w-3xl"
-          showDivider={false}
+          alignment="center"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl gap-8 md:gap-12 lg:gap-16">

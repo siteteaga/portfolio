@@ -1,77 +1,84 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { ImageOff } from "lucide-react";
 import { Skeleton } from "./Skeleton";
+import { getCategoryLabel } from "../../data/projects";
 
 interface PortfolioCardProps {
   id: number;
   image: string;
   title: string;
-  category: string;
-  onClick: (id: number) => void;
+  /** Omita quando a categoria já está clara pelo contexto (ex.: dentro de uma aba) */
+  category?: string;
+  location?: string;
+  className?: string;
 }
 
-export function PortfolioCard({ id, image, title, category, onClick }: PortfolioCardProps) {
+export function PortfolioCard({
+  id,
+  image,
+  title,
+  category,
+  location,
+  className = "",
+}: PortfolioCardProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  const handleImageLoad = () => {
-    setIsLoading(false);
-  };
-
-  const handleImageError = () => {
-    setIsLoading(false);
-    setHasError(true);
-  };
+  // Imagens já em cache podem terminar de carregar antes do onLoad ser registrado
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img?.complete) {
+      setIsLoading(false);
+      setHasError(img.naturalWidth === 0);
+    }
+  }, [image]);
 
   return (
-    <div
-      className="group cursor-pointer transform transition-all duration-300 relative"
-      onClick={() => onClick(id)}
-    >
-      <div className="aspect-[4/3] md:aspect-[6/3] overflow-hidden shadow-2xl relative rounded-2xl bg-[var(--color-overlay-light)]">
+    <Link to={`/projeto/${id}`} className={`group block ${className}`}>
+      <div className="relative aspect-[3/2] overflow-hidden rounded-sm bg-sand">
         {/* Skeleton Loading */}
-        {isLoading && (
-          <div className="absolute inset-0 z-10">
-            <Skeleton className="w-full h-full" />
-          </div>
-        )}
+        {isLoading && <Skeleton className="absolute inset-0 rounded-none" />}
 
         {/* Error State */}
-        {hasError && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--color-overlay-light)]">
-            <span className="text-[var(--color-primary-medium)] text-sm">Erro ao carregar imagem</span>
+        {hasError ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-ink-soft">
+            <ImageOff size={22} strokeWidth={1.5} aria-hidden="true" />
+            <span className="text-sm">Imagem indisponível</span>
           </div>
+        ) : (
+          <img
+            ref={imgRef}
+            src={image}
+            alt=""
+            className={`h-full w-full object-cover transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.03] ${
+              isLoading ? "opacity-0" : "opacity-100"
+            }`}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
+          />
         )}
-
-        {/* Image */}
-        <img
-          src={image}
-          alt={title}
-          className={`w-full h-full object-cover filter transition-all duration-500 rounded-2xl group-hover:scale-110 ${
-            isLoading ? "opacity-0" : "opacity-100"
-          }`}
-          loading="lazy"
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-        />
-
-        {/* Overlay com gradiente */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-overlay-medium)] via-transparent to-transparent opacity-0 group-hover:opacity-100 flex items-end justify-center transition-all duration-300 rounded-2xl">
-          <div className="text-center p-4 md:p-6">
-            <span className="text-white text-lg md:text-xl font-bold text-center drop-shadow-lg block mb-2 md:mb-4">
-              {title}
-            </span>
-            <span className="text-white text-xs md:text-sm opacity-90 font-medium">
-              Ver projeto completo
-            </span>
-          </div>
-        </div>
-
-        {/* Badge de categoria */}
-        <div className="absolute top-2 md:top-4 left-2 md:left-4 bg-[var(--color-primary-medium)] text-white px-2 md:px-3 py-1 rounded-full text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          {category.toUpperCase()}
-        </div>
       </div>
-    </div>
+
+      {/* Legenda sempre visível — não depende de hover, funciona no toque */}
+      <div className="mt-3 flex items-baseline justify-between gap-4">
+        <h3 className="text-base md:text-lg font-medium leading-snug text-primary-dark">
+          <span className="link-underline">{title}</span>
+        </h3>
+        {category && (
+          <span className="shrink-0 text-xs font-medium uppercase tracking-[0.14em] text-ink-soft">
+            {getCategoryLabel(category)}
+          </span>
+        )}
+      </div>
+      {location && <p className="mt-1 text-sm text-ink-soft">{location}</p>}
+    </Link>
   );
 }
 
